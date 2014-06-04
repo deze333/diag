@@ -15,6 +15,7 @@ import (
 type EmailNotifier struct {
     sender map[string]string
     recipient map[string]string
+    subjectPrefix string
 }
 
 var _emailNotifier *EmailNotifier
@@ -23,8 +24,8 @@ var _emailNotifier *EmailNotifier
 //
 //------------------------------------------------------------
 
-func SetEmailNotification(sender, recipient map[string]string) {
-    _emailNotifier = &EmailNotifier{sender, recipient}
+func SetEmailNotification(sender, recipient map[string]string, subjPrefix string) {
+    _emailNotifier = &EmailNotifier{sender, recipient, subjPrefix}
 }
 
 //------------------------------------------------------------
@@ -67,7 +68,7 @@ func notifyEmail(name, title string, args ...interface{}) {
         return
     }
 
-    subj := name + " : " + title
+    subj := "[" + _emailNotifier.subjectPrefix + "] " + name + " : " + title
     
     e := Email{
         Tag: name,
