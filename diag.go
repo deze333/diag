@@ -3,8 +3,6 @@ package diag
 
 import (
 	"fmt"
-	"github.com/deze333/diag/plain"
-	"github.com/deze333/diag/xterm"
 	"io/ioutil"
 	"log"
 	"os"
@@ -12,7 +10,15 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/deze333/diag/plain"
+	"github.com/deze333/diag/util"
+	"github.com/deze333/diag/xterm"
 )
+
+//------------------------------------------------------------
+// Variables
+//------------------------------------------------------------
 
 type loggers struct {
 	fnametpl string
@@ -34,14 +40,29 @@ type loggers struct {
 
 var _logger *loggers
 
-func SetHistory(size int) {
-    _logger.historySize = size
-}
+//------------------------------------------------------------
+// Init
+//------------------------------------------------------------
 
 func minStart() {
-    fmt.Println("[diag]: WARNING, diag not properly configured, assuming minimalistic configuration")
+	if _logger.xtermLog != nil {
+		_logger.xtermLog.Print(xterm.WARNING(
+			time.Now(),
+			"diag",
+			"package diag config not provided, assuming screen only output"))
+	} else {
+		fmt.Println("[diag] package diag config not provided, assuming screen only output")
+	}
 	_logger = &loggers{}
-    _logger.xtermLog = log.New(os.Stdout, "", 0)
+	_logger.xtermLog = log.New(os.Stdout, "", 0)
+}
+
+//------------------------------------------------------------
+// API
+//------------------------------------------------------------
+
+func SetHistory(size int) {
+	_logger.historySize = size
 }
 
 func Start(directory string, filename string, xterm, plain, html bool) (err error) {
@@ -159,8 +180,8 @@ func rotateLogs() {
 // to the end of cycle
 func rotationDelta(t time.Time) time.Duration {
 	// Advance to next day
-    t2 := t.Add(time.Hour * 24)
-    // Event will take place next day 23:59:00
+	t2 := t.Add(time.Hour * 24)
+	// Event will take place next day 23:59:00
 	t2 = time.Date(
 		t2.Year(),
 		t2.Month(),
@@ -169,12 +190,12 @@ func rotationDelta(t time.Time) time.Duration {
 		12, 00, 0, 0,
 		t2.Location())
 
-    // TEMPORARY TEST PLUG: Set to very short period
+	// TEMPORARY TEST PLUG: Set to very short period
 	//t2 = t.Add(time.Second * 60 * 10)
 
-    //fmt.Printf("!!!!!! T1 = %v\n", t)
-    //fmt.Printf(">>>>>> T2 = %v\n", t2)
-    //fmt.Printf("###### ROTATION DELTA = %v\n", t2.Sub(t))
+	//fmt.Printf("!!!!!! T1 = %v\n", t)
+	//fmt.Printf(">>>>>> T2 = %v\n", t2)
+	//fmt.Printf("###### ROTATION DELTA = %v\n", t2.Sub(t))
 
 	return t2.Sub(t)
 }
@@ -275,7 +296,7 @@ func Printf(format string, v ...interface{}) {
 // they will record that message too.
 func DEBUG(name, title string, v ...interface{}) {
 	if _logger == nil {
-        minStart()
+		minStart()
 	}
 
 	t := time.Now()
@@ -299,7 +320,7 @@ func DEBUG(name, title string, v ...interface{}) {
 // Simple NOTE
 func NOTE(msg string, v ...interface{}) {
 	if _logger == nil {
-        minStart()
+		minStart()
 	}
 
 	t := time.Now()
@@ -323,7 +344,7 @@ func NOTE(msg string, v ...interface{}) {
 // Simple NOTE 2 (Inverse color)
 func NOTE2(msg string, v ...interface{}) {
 	if _logger == nil {
-        minStart()
+		minStart()
 	}
 
 	t := time.Now()
@@ -347,7 +368,7 @@ func NOTE2(msg string, v ...interface{}) {
 // Outputs WARNING message
 func WARNING(name, title string, v ...interface{}) {
 	if _logger == nil {
-        minStart()
+		minStart()
 	}
 
 	t := time.Now()
@@ -371,7 +392,7 @@ func WARNING(name, title string, v ...interface{}) {
 // Outputs ERROR message
 func ERROR(name, title string, v ...interface{}) {
 	if _logger == nil {
-        minStart()
+		minStart()
 	}
 
 	t := time.Now()
@@ -396,7 +417,11 @@ func ERROR(name, title string, v ...interface{}) {
 // And attempts to immediately contact a human.
 // If file based loggers were configured then
 // they will record that message too.
+// NEW: Add "stack" as the last of v and stack trace will be appended.
 func SOS(name, title string, v ...interface{}) {
-    notifyEmail(name, title, v...) 
-    ERROR(name, title, v...)
+	if fmt.Sprint(v[len(v)-1]) == "stack" {
+		v = append(v, util.Stack())
+	}
+	notifyEmail(name, title, v...)
+	ERROR(name, title, v...)
 }
