@@ -45,7 +45,7 @@ var _logger *loggers
 //------------------------------------------------------------
 
 func minStart() {
-	if _logger.xtermLog != nil {
+	if _logger != nil && _logger.xtermLog != nil {
 		_logger.xtermLog.Print(xterm.WARNING(
 			time.Now(),
 			"diag",
