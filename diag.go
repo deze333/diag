@@ -419,7 +419,7 @@ func ERROR(name, title string, v ...interface{}) {
 // they will record that message too.
 // NEW: Add "stack" as the last of v and stack trace will be appended.
 func SOS(name, title string, v ...interface{}) {
-	if fmt.Sprint(v[len(v)-1]) == "stack" {
+	if len(v) != 0 && fmt.Sprint(v[len(v)-1]) == "stack" {
 		v = append(v, util.Stack())
 	}
 	notifyEmail(name, title, v...)
