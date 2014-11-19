@@ -425,3 +425,10 @@ func SOS(name, title string, v ...interface{}) {
 	notifyEmail(name, title, v...)
 	ERROR(name, title, v...)
 }
+
+func SOS_Stack(name, title string, v ...interface{}) {
+	v = append(v, "stack")
+	v = append(v, util.Stack())
+	notifyEmail(name, title, v...)
+	ERROR(name, title, v...)
+}
