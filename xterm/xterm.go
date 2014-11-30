@@ -4,7 +4,7 @@ package xterm
 import (
 	"fmt"
 	"strings"
-    "time"
+	"time"
 )
 
 const (
@@ -40,16 +40,22 @@ func DEBUG(time time.Time, name, title string, args ...interface{}) string {
 	out := []string{}
 	out = append(out, fmt.Sprintf("\n%s%s\n%s%s%s", CYAN, name, YELLOW, title, CLEAR))
 
-    if len(args) == 1 {
+	if len(args) == 1 {
 		out = append(out, fmt.Sprintf(" %s%v%s", WHITE, args[0], CLEAR))
-    } else {
-        for i := 0; i + 1 < len(args); i += 2 {
-            out = append(out, fmt.Sprintf("    %s* %s%v = %s%v", WHITE, BLUE, args[i], WHITE, args[i+1]))
-            if i == len(args) - 2 {
-                out = append(out, CLEAR)
-            }
-        }
-    }
+	} else {
+		for i := 0; i+1 < len(args); i += 2 {
+			k := args[i]
+			v := args[i+1]
+			if k == "" && v == "" {
+				out = append(out, fmt.Sprintf("    %s*", WHITE))
+				continue
+			}
+			out = append(out, fmt.Sprintf("    %s* %s%v = %s%v", WHITE, BLUE, k, WHITE, v))
+			if i == len(args)-2 {
+				out = append(out, CLEAR)
+			}
+		}
+	}
 
 	return strings.Join(out, "\n")
 }
@@ -57,16 +63,22 @@ func DEBUG(time time.Time, name, title string, args ...interface{}) string {
 // NOTE output
 func NOTE(time time.Time, msg string, args ...interface{}) string {
 	out := []string{}
-    out = append(out, fmt.Sprintf("%s%v%s", INVERSE_WHITE, msg, CLEAR))
+	out = append(out, fmt.Sprintf("%s%v%s", INVERSE_WHITE, msg, CLEAR))
 
-    if len(args) == 1 {
+	if len(args) == 1 {
 		out = append(out, fmt.Sprintf(" %s%v%s", WHITE, args[0], CLEAR))
-    } else {
-        for i := 0; i + 1 < len(args); i += 2 {
-            out = append(out, fmt.Sprintf(" %s%v = %s%v", BLUE, args[i], WHITE, args[i+1]))
-        }
-        out = append(out, CLEAR)
-    }
+	} else {
+		for i := 0; i+1 < len(args); i += 2 {
+			k := args[i]
+			v := args[i+1]
+			if k == "" && v == "" {
+				out = append(out, fmt.Sprintf("    %s*", WHITE))
+				continue
+			}
+			out = append(out, fmt.Sprintf(" %s%v = %s%v", BLUE, k, WHITE, v))
+		}
+		out = append(out, CLEAR)
+	}
 
 	return strings.Join(out, "")
 }
@@ -74,16 +86,16 @@ func NOTE(time time.Time, msg string, args ...interface{}) string {
 // NOTE2 output
 func NOTE2(time time.Time, msg string, args ...interface{}) string {
 	out := []string{}
-    out = append(out, fmt.Sprintf("%s%v%s:", INVERSE_BLUE, msg, CLEAR))
+	out = append(out, fmt.Sprintf("%s%v%s:", INVERSE_BLUE, msg, CLEAR))
 
-    if len(args) == 1 {
+	if len(args) == 1 {
 		out = append(out, fmt.Sprintf(" %s%v%s", WHITE, args[0], CLEAR))
-    } else {
-        for i := 0; i + 1 < len(args); i += 2 {
-            out = append(out, fmt.Sprintf(" %s%v = %s%v", BLUE, args[i], WHITE, args[i+1]))
-        }
-        out = append(out, CLEAR)
-    }
+	} else {
+		for i := 0; i+1 < len(args); i += 2 {
+			out = append(out, fmt.Sprintf(" %s%v = %s%v", BLUE, args[i], WHITE, args[i+1]))
+		}
+		out = append(out, CLEAR)
+	}
 
 	return strings.Join(out, "")
 }
@@ -93,16 +105,22 @@ func WARNING(time time.Time, name, title string, args ...interface{}) string {
 	out := []string{}
 	out = append(out, fmt.Sprintf("\n%s%s\n%s%s%s", CYAN, name, INVERSE_YELLOW, title, CLEAR))
 
-    if len(args) == 1 {
+	if len(args) == 1 {
 		out = append(out, fmt.Sprintf(" %s%v%s", WHITE, args[0], CLEAR))
-    } else {
-        for i := 0; i + 1 < len(args); i += 2 {
-            out = append(out, fmt.Sprintf("    %s* %s%v = %s%v", WHITE, BLUE, args[i], WHITE, args[i+1]))
-            if i == len(args) - 2 {
-                out = append(out, CLEAR)
-            }
-        }
-    }
+	} else {
+		for i := 0; i+1 < len(args); i += 2 {
+			k := args[i]
+			v := args[i+1]
+			if k == "" && v == "" {
+				out = append(out, fmt.Sprintf("    %s*", WHITE))
+				continue
+			}
+			out = append(out, fmt.Sprintf("    %s* %s%v = %s%v", WHITE, BLUE, k, WHITE, v))
+			if i == len(args)-2 {
+				out = append(out, CLEAR)
+			}
+		}
+	}
 
 	return strings.Join(out, "\n")
 }
@@ -112,16 +130,22 @@ func ERROR(time time.Time, name, title string, args ...interface{}) string {
 	out := []string{}
 	out = append(out, fmt.Sprintf("\n%s%s\n%s%s%s", CYAN, name, INVERSE_RED, title, CLEAR))
 
-    if len(args) == 1 {
+	if len(args) == 1 {
 		out = append(out, fmt.Sprintf(" %s%v%s", WHITE, args[0], CLEAR))
-    } else {
-        for i := 0; i + 1 < len(args); i += 2 {
-            out = append(out, fmt.Sprintf("    %s* %s%v = %s%v", WHITE, BLUE, args[i], WHITE, args[i+1]))
-            if i == len(args) - 2 {
-                out = append(out, CLEAR)
-            }
-        }
-    }
+	} else {
+		for i := 0; i+1 < len(args); i += 2 {
+			k := args[i]
+			v := args[i+1]
+			if k == "" && v == "" {
+				out = append(out, fmt.Sprintf("    %s*", WHITE))
+				continue
+			}
+			out = append(out, fmt.Sprintf("    %s* %s%v = %s%v", WHITE, BLUE, k, WHITE, v))
+			if i == len(args)-2 {
+				out = append(out, CLEAR)
+			}
+		}
+	}
 
 	return strings.Join(out, "\n")
 }
